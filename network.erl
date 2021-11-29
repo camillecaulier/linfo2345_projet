@@ -3,11 +3,12 @@
 -export([my_node/0, network_send_to_nodes/2, network_start/1]).
 
 my_node()->
-	io:fwrite("camille est nul"),
+	
   receive
     Pid_list->
-      io:fwrite("~p",[Pid_list])
-  end,
+   
+      io:fwrite("Received ~p je suis  ~p\n",[Pid_list,self()])
+     end,
    my_node().
 
   
@@ -20,17 +21,18 @@ append([], Tail) ->
 network_start_pid(N,Pid_list) when N == 0 -> Pid_list;
 network_start_pid(N,Pid_list) when N > 0 -> 
 	Pid = [spawn(fun network:my_node/0)],
-	append(Pid_list, Pid),
-	io:fwrite("sending ~p \n",[Pid_list]),
-	network_start_pid(N-1,Pid_list).
+	New_Pid_list = append(Pid_list, Pid),
+	io:fwrite("creating ~p \n",[New_Pid_list]),
+	network_start_pid(N-1,New_Pid_list).
 
 
 network_send_to_nodes(Pid_list, [])->
   io:fwrite("list sent");
 network_send_to_nodes(Pid_list, [H|T])->
-	io:fwrite("send to nodes ~p\n",[Pid_list]),
+	io:fwrite("send to ~p the list ~p\n",[H,Pid_list]),
+
   H ! Pid_list,
-  network_send_to_nodes(Pid_list, [T]).
+  network_send_to_nodes(Pid_list, T).
 
 
 
