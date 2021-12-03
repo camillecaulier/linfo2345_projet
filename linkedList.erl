@@ -25,20 +25,24 @@ pushLl([],PID,Table)->
 getTableIn(L)->
 	lists:nth(3, L).	
 getTable([H|T],Id)->
-	MyIndex = getID([H]),
+	io:fwrite("dans le get table :~w\n", [[H|T]]),
+	MyIndex = getID(H),
 	if
-		MyIndex == Id ->
-			MyTable =getTableIn(H),
-			MyTable;
-		true->
-			getTable([T],Id)
-			
+		MyIndex == Id -> getTableIn(H)
+		; MyIndex /= Id->getTable(T,Id)	
 	end.
 run()->
 	NewList = pushLl([],1,[1,2,3]),
 	io:fwrite("~w\n", [NewList]),
-	NewList = pushLl(NewList,2,[4,5,6]),
-	io:fwrite("dans le run :~w\n", [NewList]),
-	NewList = pushLl(NewList,3,[7,8,9]).
+	Fresh = pushLl(NewList,2,[4,5,6]),
+	io:fwrite("dans le run :~w\n", [Fresh]),
+	Fresh2 = pushLl(Fresh,3,[7,8,9]),
+	io:fwrite("la table :~w\n", [Fresh2]),
+	Table = getTable(Fresh2,1),
+	io:fwrite("la table :~w\n", [Table]).
+
+	
+
+
 	
 	
