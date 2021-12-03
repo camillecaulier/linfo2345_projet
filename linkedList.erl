@@ -39,6 +39,7 @@ run()->
 	Fresh2 = pushLl(Fresh,3,[7,8,9]),
 	io:fwrite("la table :~w\n", [Fresh2]),
 	Table = getTable(Fresh2,1),
+	% ´tu es nul
 	io:fwrite("la table :~w\n", [Table]).
 
 	
