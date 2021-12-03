@@ -17,3 +17,16 @@ pushLl([H|T],PID,Table)->
 pushLl([],PID,Table)->
 	Head = [1,PID,Table],
 	io:fwrite("~w\n", [Table]).
+
+getTableIn(L)->
+	lists:nth(3, L).	
+getTable([H|T],Id)->
+	MyIndex = getID([H]),
+	if
+		MyIndex == Id ->
+			MyTable =getTableIn(H),
+			MyTable;
+		true->
+			getTable([T],Id)
+			
+	end.
