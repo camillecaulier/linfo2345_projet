@@ -13,11 +13,18 @@ my_node()->
 		% 		totral = total + 1
   %       if total == N 
   %         chosen node = pidlist[value]
-  %         send to value permission
+  %         send to value you are elected,Blockchain
+  {Random,UpdatedBlockchain}->
+  	
     {"you are elected", Blockchain}->
-        io:fwrite("tes moche charles\n")    
-        broadcast_blockchain
-     end,
+        io:fwrite("tes moche charles\n");   
+        %push block 
+        %broadcast_blockchain
+
+    {UpdatedBlockchain}->
+    	%getLastBlockPId
+    	LastBlockPid ! RandomNumber
+end,
    my_node().
 
 
