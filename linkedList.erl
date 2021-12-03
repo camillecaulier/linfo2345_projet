@@ -1,33 +1,19 @@
 -module(linkedList).
--export([pushLl/3,getLl/2]).
+-export([pushLl/3]).
 
-
+%structure [id,pid,table]
 getID(L)->
 	lists:nth(1, L).
 
-push_rec([H|T],Head)->
-		Id = getID(H) +1,
-		Head = [Id,PID,Table],
-		[H|push_rec(T,Head)];
-push_rec([],Head)->
-			Head.
+
 
 pushLl([H|T],PID,Table)->
-	Head = [1,PID,Table],
-	push_rec([H|T],Head);
+	{ID_prev, PID_prev, Table_prev} = H,
+	ID = ID_prev +1,
+	Head = [ID,PID,Table],
+	List = [H|T],
+	Newlist =[Head|List],
+	io:fwrite("~p\n", Newlist);
 pushLl([],PID,Table)->
-	Head = [1,PID,Table].
-
-getTable(L) ->
-	lists:nth(3, L).
-getLl([H|T],Id)->
-	if 
-		getID(H) == Id ->
-			getTable(H);
-		true ->
-			getLl(T,Id)
-	end.
-
-
-
-
+	Head = [1,PID,Table],
+	io:fwrite("~w\n", [Table]).
