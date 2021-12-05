@@ -1,6 +1,7 @@
 -module(network).
-
 -export([my_node/0, network_send_to_nodes/2, network_start/1]).
+-import(linkedList,[pushLl/3,getTable/2,run/0]).
+
 
 my_node()->
 
@@ -16,9 +17,10 @@ my_node()->
   %         send to value you are elected,Blockchain
   {Random,UpdatedBlockchain}->
   	
-    {"you are elected", Blockchain}->
+    {"you are elected", Blockchain,Pid_list}->
         io:fwrite("tes moche charles\n");   
-        %push block 
+        UpdatedBlockChain = pushLl(Blockchain,self(),[]),
+        network_send_to_nodes(UpdatedBlockchain,Pid_list);
         %broadcast_blockchain
 
     {UpdatedBlockchain}->
