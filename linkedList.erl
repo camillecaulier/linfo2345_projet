@@ -8,17 +8,17 @@ getID(L)->
 
 
 pushLl([H|T],PID,Table)->
-	io:fwrite("Head = ~w\n", [H]),
+	% io:fwrite("Head = ~w\n", [H]),
 	ID_prev = getID(H),
 	ID = ID_prev +1,
-	io:fwrite("my id = ~p\n", [ID]),
+	% io:fwrite("my id = ~p\n", [ID]),
 	Head = [ID,PID,Table],
 	List = [H|T],
 	% Newlist =[Head|List],
 	% io:fwrite("the new list is : ~w\n", [Newlist]),
 	[Head|List];
 pushLl([],PID,Table)->
-	io:fwrite("~w\n", [Table]),
+	% io:fwrite("~w\n", [Table]),
 	[[1,PID,Table]].
 	
 
