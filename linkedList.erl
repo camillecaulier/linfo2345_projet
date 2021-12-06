@@ -1,5 +1,5 @@
 -module(linkedList).
--export([pushLl/3,getTable/2,run/0]).
+-export([pushLl/3,getID/1,getTable/2,run/0]).
 
 %structure [id,pid,table]
 getID(L)->

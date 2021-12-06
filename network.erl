@@ -1,6 +1,6 @@
 -module(network).
--export([my_node/0, network_send_to_nodes/2, network_start/1]).
--import(linkedList,[pushLl/3,getTable/2,run/0]).
+-export([network_send_to_nodes/2, network_start/1]).
+-import(linkedList,[pushLl/3,getTable/2,run/0,getID/1]).
 
 
 my_node()->
@@ -9,27 +9,41 @@ my_node()->
     {Pid_list}->
 
       io:fwrite("Received ~p je suis  ~p\n",[Pid_list,self()]);
-		% random->
-		% 		value = (random + value ) rem N %quand est ce que tout est envoye?
-		% 		totral = total + 1
-  %       if total == N 
-  %         chosen node = pidlist[value]
-  %         send to value you are elected,Blockchain
-  {Random,UpdatedBlockchain}->
+	{RandomNumber,Pid_list,UpdatedBlockchain}->
+		Value = (RandomNumber + Value ),
+		Total = Total + 1,
+  		if 
+  			Total == length(Pid_list)-> 
+  				Value = Value rem length(Pid_list),
+  				Chosen_Node = lists:nth(Value,Pid_list),
+  				Chosen_Node ! {"you are elected" , Blockchain, Pid_list}
+  		end;
   	
     {"you are elected", Blockchain,Pid_list}->
-        io:fwrite("tes moche charles\n");   
+        io:fwrite("tes moche charles\n"),  
         UpdatedBlockChain = pushLl(Blockchain,self(),[]),
-        network_send_to_nodes(UpdatedBlockchain,Pid_list);
+        network_send_updated(UpdatedBlockchain,Pid_list,Pid_list);
         %broadcast_blockchain
 
-    {UpdatedBlockchain}->
+    {UpdatedBlockchain,Pid_list}->
     	%getLastBlockPId
-    	LastBlockPid ! RandomNumber
-end,
+    	LastBlockPid =getLastId(UpdatedBlockchain),
+    	RandomNumber = rand:uniform(length(Pid_list)),
+    	LastBlockPid ! {RandomNumber,Pid_list,UpdatedBlockchain}
+    
+	end,
    my_node().
 
+getLastId([H|T])->
+	getID(H).
 
+network_send_updated(UpdatedBlockchain,Pid_list, [])->
+  io:fwrite("list sent\n");
+network_send_updated(UpdatedBlockchain,Pid_list, [H|T])->
+	io:fwrite("send to ~p the list ~p\n",[H,Pid_list]),
+
+  H ! {UpdatedBlockchain,Pid_list},
+  network_send_updated(UpdatedBlockchain,Pid_list, T).
 
 append([H|T], Tail) ->
     [H|append(T, Tail)];
