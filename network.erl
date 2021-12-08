@@ -1,5 +1,5 @@
 -module(network).
--export([getLastBlockPId/1,my_node/7,network_start/2]).
+-export([my_node/7,network_start/2]).
 -import(linkedList,[pushLl/3,getTable/2,run/0,getID/1]).
 
 my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
@@ -14,6 +14,7 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
       my_node(Pid_list,VCount,Blockchain,Random_value,Total_received,Stop,1);
 
     {"stop", Empty}->
+      Empty,
       io:fwrite("node die \n"),
       ok;
 
@@ -42,7 +43,7 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
             io:fwrite("~p send random to : ~p\n",[self(),Pid]),
             Pid ! {"random_number",rand:uniform(length(Pid_list_node))};
           true->
-            self() 
+            V
         end,
         my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stop,V);
        
@@ -63,21 +64,19 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
      ok.
 
    
-getLastBlockPId([H|T])->
-    linkedList:getID(H).
 
 append([H|T], Tail) ->
     [H|append(T, Tail)];
 append([], Tail) ->
     Tail.
 
-network_start_pid(N,Pid_list,V) when N == 0 -> Pid_list;
+network_start_pid(N,Pid_list,_V) when N == 0 -> Pid_list;
 network_start_pid(N,Pid_list,V) when N > 0 ->
   Pid = [spawn(network, my_node,[[],V,[],0,0, 5,0])],
   New_Pid_list = append(Pid_list, Pid),
   network_start_pid(N-1,New_Pid_list,V).
 
-network_send_to_nodes(Data,Message, [],N)->
+network_send_to_nodes(_Data,_Message, [],_N)->
   break;
 network_send_to_nodes(Data,Message, [H|T],N)->
   if
