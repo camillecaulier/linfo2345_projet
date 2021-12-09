@@ -1,6 +1,7 @@
 -module(network).
--export([my_node/7,network_start/2]).
+-export([my_node/7,network_start/2,main/0]).
 -import(linkedList,[pushLl/3,getTable/2,run/0,getID/1]).
+-import(merkleTree,[createTree/1]).
 
 my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
   % Pid_list_node = [],
@@ -48,7 +49,9 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
         my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stop,V);
        
     {"you are elected", Blockchain}->
-        New_blockchain = linkedList:pushLl(Blockchain,self(),["transaction..."]),
+        TransactionList = makeFakeTransactions(), %make transaction list between 1-10
+        MerkleTreeRoot = merkleTree:createTree(TransactionList),
+        New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
         io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
         if
           length(New_blockchain) == Stop->
@@ -99,8 +102,24 @@ network_start(N,V)->
   Elected_node_pid = lists:nth(Elected_node,Pid_list),
   Blockchain = [],
   Elected_node_pid ! {"you are elected",Blockchain}.
-% elect_node(N)->
-%     if(rien in blovkchain)
-%         node = random:uniform(N)-1;
-%         node elect => pid! execute order 66
-%     else
+
+
+makeFakeTransactions()->
+    Fake_Transaction_List = ["charles a paye camille 10 euros", "camille a paye charles un burrito", "charles a paye des bisous a camille", "camille a paye cahrles rien","charles a paye camilles 10k euros", "camille a paye charles partiquement rien"],
+    % creates a list of random transactions between 1 and 10 size 
+    Random_size = rand:uniform(10),
+    makeFakeTransactionsBis(Random_size,Fake_Transaction_List,[]).
+
+
+makeFakeTransactionsBis(N, Fake_Transaction_List,ACC)->
+    if 
+      N==0->
+        ACC;
+      true->
+        Random_transaction  = lists:nth(rand:uniform(length(Fake_Transaction_List)),Fake_Transaction_List),
+        NewACC= [Random_transaction|ACC],
+        makeFakeTransactionsBis(N-1, Fake_Transaction_List,NewACC)
+    end.
+
+main()->
+  makeFakeTransactions().    
