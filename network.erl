@@ -38,7 +38,7 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
             my_node(Pid_list_node,VCount,Blockchain,Random + Random_value,Total_received+1,Stop,V)
         end;
    
-    {"updated", New_blockchain,PID_pusher}->
+    {"updated", New_blockchain,PID_pusher,Stopping}->
         % Pid = lists:nth(2,lists:nth(1,New_blockchain)),
         if 
           V == 1-> 
@@ -47,24 +47,22 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
           true->
             V
         end,
-        my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stop,V);
+        my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stopping,V);
        
     {"you are elected", Blockchain}->
-        io:fwrite("charles pue \n"),
         TransactionList = makeFakeTransactions(), %make transaction list between 1-10
         MerkleTreeRoot = merkleTree:createTree(TransactionList), %create id 
-        io:fwrite("~w\n",[MerkleTreeRoot]),
         New_block = linkedList2:createNewBlock(MerkleTreeRoot),
         New_blockchain = linkedList2:push(Blockchain,New_block),
         % New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
         io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
         if
-          length(New_blockchain) == Stop->
+          Stop == 1->
             io:fwrite("node stopped \n"),
             network_send_to_nodes([],"stop", Pid_list_node,0),
             ok;
           true ->
-            network_send_to_nodes2(New_blockchain,"updated",Pid_list_node,self()),
+            network_send_to_nodes2(New_blockchain,"updated",Pid_list_node,self(),Stop-1),
             my_node(Pid_list_node,VCount,New_blockchain,0,0,Stop,V)
         end
         % broadcast_blockchain
@@ -81,7 +79,7 @@ append([], Tail) ->
 
 network_start_pid(N,Pid_list,_V) when N == 0 -> Pid_list;
 network_start_pid(N,Pid_list,V) when N > 0 ->
-  Pid = [spawn(network, my_node,[[],V,[],0,0, 5,0])],
+  Pid = [spawn(network, my_node,[[],V,[],0,0, 10,0])],
   New_Pid_list = append(Pid_list, Pid),
   network_start_pid(N-1,New_Pid_list,V).
 
@@ -97,11 +95,11 @@ network_send_to_nodes(Data,Message, [H|T],N)->
       network_send_to_nodes(Data, Message, T,N)
     end.
 
-network_send_to_nodes2(_Data,_Message, [],_PID)->
+network_send_to_nodes2(_Data,_Message, [],_PID,_Stopping)->
   break;
-network_send_to_nodes2(Data,Message, [H|T],PID)->
-    H ! {Message,Data,PID},
-    network_send_to_nodes2(Data, Message, T,PID).
+network_send_to_nodes2(Data,Message, [H|T],PID,Stopping)->
+    H ! {Message,Data,PID,Stopping},
+    network_send_to_nodes2(Data, Message, T,PID,Stopping).
 
 
 network_start(N,V)->
