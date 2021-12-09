@@ -103,7 +103,7 @@ network_start(N,V)->
   Blockchain = [],
   Elected_node_pid ! {"you are elected",Blockchain}.
 
-
+% create list of fake random transactions
 makeFakeTransactions()->
     Fake_Transaction_List = ["charles a paye camille 10 euros", "camille a paye charles un burrito", "charles a paye des bisous a camille", "camille a paye cahrles rien","charles a paye camilles 10k euros", "camille a paye charles partiquement rien"],
     % creates a list of random transactions between 1 and 10 size 
