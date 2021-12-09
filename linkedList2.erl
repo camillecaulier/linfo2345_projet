@@ -8,14 +8,14 @@ createNewBlock(Id)->
 	#block{ id = Id, timestamp = Timestamp}.
 
 push(LastBlock,CurrentBlock)-> 
-	if LastBlock == nil ->
-		CurrentBlock#block{prev = LastBlock};
+	if LastBlock == [] ->
+		CurrentBlock#block{prev = nil};
 		true->
 		CurrentBlock#block{prev = LastBlock,prev_id = LastBlock#block.id}
 	end.
 
 main()->
-	First = nil,
+	First = [],
 	Second_id = 1,
 	Third_id = 2,
 	Fourth_id =3,

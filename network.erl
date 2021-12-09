@@ -2,6 +2,7 @@
 -export([my_node/7,network_start/2,main/0]).
 -import(linkedList,[pushLl/3,getTable/2,run/0,getID/1]).
 -import(merkleTree,[createTree/1]).
+-import(linkedList2,[createNewBlock/1, push/2]).
 
 my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
   % Pid_list_node = [],
@@ -49,9 +50,13 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
         my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stop,V);
        
     {"you are elected", Blockchain}->
+        io:fwrite("charles pue \n"),
         TransactionList = makeFakeTransactions(), %make transaction list between 1-10
-        MerkleTreeRoot = merkleTree:createTree(TransactionList),
-        New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
+        MerkleTreeRoot = merkleTree:createTree(TransactionList), %create id 
+        io:fwrite("~w\n",[MerkleTreeRoot]),
+        New_block = linkedList2:createNewBlock(MerkleTreeRoot),
+        New_blockchain = linkedList2:push(Blockchain,New_block),
+        % New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
         io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
         if
           length(New_blockchain) == Stop->

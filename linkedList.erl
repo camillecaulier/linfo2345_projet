@@ -2,6 +2,7 @@
 -export([pushLl/3,getID/1,getTable/2,run/0]).
 
 %structure [id,pid,table]
+%new structure [prev_id, id ,timestamp]
 getID(L)->
 	lists:nth(1, L).
 

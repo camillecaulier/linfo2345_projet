@@ -50,7 +50,8 @@ recursiveSum(ListOfHash, Acc)->
 recursiveRoot(ListOfHash)->
 	if
 		length(ListOfHash) == 1->
-			ListOfHash;
+			[H] = ListOfHash,
+			H;
 		length(ListOfHash) >1->
 			NewListOfHash = recursiveSum(ListOfHash,[]),
 			recursiveRoot(NewListOfHash)
