@@ -50,18 +50,19 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
         my_node(Pid_list_node,VCount,New_blockchain,Random_value,Total_received,Stopping,V);
        
     {"you are elected", Blockchain}->
-        TransactionList = makeFakeTransactions(), %make transaction list between 1-10
-        MerkleTreeRoot = merkleTree:createTree(TransactionList), %create id 
-        New_block = linkedList2:createNewBlock(MerkleTreeRoot),
-        New_blockchain = linkedList2:push(Blockchain,New_block),
-        % New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
-        io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
+        
         if
-          Stop == 1->
+          Stop == 0->
             io:fwrite("node stopped \n"),
             network_send_to_nodes([],"stop", Pid_list_node,0),
             ok;
           true ->
+            TransactionList = makeFakeTransactions(), %make transaction list between 1-10
+            MerkleTreeRoot = merkleTree:createTree(TransactionList), %create id 
+            New_block = linkedList2:createNewBlock(MerkleTreeRoot),
+            New_blockchain = linkedList2:push(Blockchain,New_block),
+            % New_blockchain = linkedList:pushLl(Blockchain,self(),MerkleTreeRoot),
+            io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
             network_send_to_nodes2(New_blockchain,"updated",Pid_list_node,self(),Stop-1),
             my_node(Pid_list_node,VCount,New_blockchain,0,0,Stop,V)
         end
