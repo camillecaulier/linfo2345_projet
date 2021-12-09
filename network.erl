@@ -59,11 +59,12 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
             network_send_to_nodes([],"stop", Pid_list_node,0),
             ok;
           true ->
-            network_send_to_nodes(New_blockchain,"updated",Pid_list_node,0),
+            network_send_to_nodes2(New_blockchain,"updated",Pid_list_node,self()),
             my_node(Pid_list_node,VCount,New_blockchain,0,0,Stop,V)
         end
         % broadcast_blockchain
      end,
+  
      ok.
 
    
@@ -91,6 +92,11 @@ network_send_to_nodes(Data,Message, [H|T],N)->
       network_send_to_nodes(Data, Message, T,N)
     end.
 
+network_send_to_nodes2(_Data,_Message, [],_PID)->
+  break;
+network_send_to_nodes2(Data,Message, [H|T],PID)->
+    H ! {Message,Data,PID},
+    network_send_to_nodes2(Data, Message, T,PID).
 
 
 network_start(N,V)->
@@ -100,7 +106,7 @@ network_start(N,V)->
   network_send_to_nodes(Pid_list,"pid_list",Pid_list,V),
   Elected_node = rand:uniform(V),
   Elected_node_pid = lists:nth(Elected_node,Pid_list),
-  Blockchain = [],
+  Blockchain = [],  
   Elected_node_pid ! {"you are elected",Blockchain}.
 
 % create list of fake random transactions
