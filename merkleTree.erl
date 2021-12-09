@@ -8,7 +8,6 @@
 %NOTE THE TRANSACTION DATA MUST BE  IN STRING
 createTree(TransactionData)->
 	ListOfHash= createFirstHash(TransactionData,[]),
-	io:fwrite("ListOfHash	~w\n",[ListOfHash	]),
 	Tree = recursiveRoot(ListOfHash),
 	Tree.
 

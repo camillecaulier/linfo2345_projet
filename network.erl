@@ -122,4 +122,5 @@ makeFakeTransactionsBis(N, Fake_Transaction_List,ACC)->
     end.
 
 main()->
-  makeFakeTransactions().    
+  Test =makeFakeTransactions(),
+  merkleTree:createTree(Test).    
