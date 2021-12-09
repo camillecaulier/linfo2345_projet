@@ -11,7 +11,7 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
       my_node(Pid_list,VCount,Blockchain,Random_value,Total_received,Stop,V);
 
     {"pid_list",Pid_list,"You are V"}->
-      io:fwrite("node ~p is a manager : \n",[self()]),
+      io:fwrite("node ~p is a validator : \n",[self()]),
       my_node(Pid_list,VCount,Blockchain,Random_value,Total_received,Stop,1);
 
     {"stop", Empty}->
@@ -37,12 +37,12 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
             my_node(Pid_list_node,VCount,Blockchain,Random + Random_value,Total_received+1,Stop,V)
         end;
    
-    {"updated", New_blockchain}->
-        Pid = lists:nth(2,lists:nth(1,New_blockchain)),
+    {"updated", New_blockchain,PID_pusher}->
+        % Pid = lists:nth(2,lists:nth(1,New_blockchain)),
         if 
           V == 1-> 
-            io:fwrite("~p send random to : ~p\n",[self(),Pid]),
-            Pid ! {"random_number",rand:uniform(length(Pid_list_node))};
+            io:fwrite("~p send random to : ~p\n",[self(),PID_pusher]),
+            PID_pusher ! {"random_number",rand:uniform(length(Pid_list_node))};
           true->
             V
         end,
