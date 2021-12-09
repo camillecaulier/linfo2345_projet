@@ -51,13 +51,13 @@ my_node(Pid_list_node,VCount,Blockchain,Random_value,Total_received,Stop,V)->
         New_blockchain = linkedList:pushLl(Blockchain,self(),["transaction..."]),
         io:fwrite("~p broadcasting the updated blockchain\n",[self()]),
         if
-          Stop == 0->
+          length(New_blockchain) == Stop->
             io:fwrite("node stopped \n"),
             network_send_to_nodes([],"stop", Pid_list_node,0),
             ok;
           true ->
             network_send_to_nodes(New_blockchain,"updated",Pid_list_node,0),
-            my_node(Pid_list_node,VCount,New_blockchain,0,0,Stop -1,V)
+            my_node(Pid_list_node,VCount,New_blockchain,0,0,Stop,V)
         end
         % broadcast_blockchain
      end,
